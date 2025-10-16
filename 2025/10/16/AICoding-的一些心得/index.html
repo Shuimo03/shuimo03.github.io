@@ -19,21 +19,22 @@
   <meta name="author" content="Wu Liang">
   <meta name="keywords" content="">
   
-    <meta name="description" content="简单说明之前写的内容已经丢失，而且也有一年没更新，这次重新折腾一下。">
+    <meta name="description" content="AI Coding其实现在用大模型写代码是一个非常流行的事情了，这里分享下使用 codex 和 claude code 写代码的一些心得。 提前熟悉项目 or 做好系统设计这里其实有一点废话，哪怕是古法编程最开始也是需要对项目或者系统有一个熟悉的过程，但是这里不一样的地方是我们可以把项目先梳理一遍，画出架构图，如果有架构图更好。然后把对项目的理解喂给 Claude Code 或者 GPT ，确认没">
 <meta property="og:type" content="article">
-<meta property="og:title" content="博客说明">
-<meta property="og:url" content="http://example.com/2025/10/11/%E5%8D%9A%E5%AE%A2%E8%AF%B4%E6%98%8E/index.html">
+<meta property="og:title" content="AICoding 的一些心得">
+<meta property="og:url" content="http://example.com/2025/10/16/AICoding-%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BF%83%E5%BE%97/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="简单说明之前写的内容已经丢失，而且也有一年没更新，这次重新折腾一下。">
+<meta property="og:description" content="AI Coding其实现在用大模型写代码是一个非常流行的事情了，这里分享下使用 codex 和 claude code 写代码的一些心得。 提前熟悉项目 or 做好系统设计这里其实有一点废话，哪怕是古法编程最开始也是需要对项目或者系统有一个熟悉的过程，但是这里不一样的地方是我们可以把项目先梳理一遍，画出架构图，如果有架构图更好。然后把对项目的理解喂给 Claude Code 或者 GPT ，确认没">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-10-11T06:12:10.000Z">
-<meta property="article:modified_time" content="2025-10-11T06:23:11.231Z">
+<meta property="article:published_time" content="2025-10-16T12:57:07.000Z">
+<meta property="article:modified_time" content="2025-10-16T13:55:37.999Z">
 <meta property="article:author" content="Wu Liang">
+<meta property="article:tag" content="AI">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>博客说明 - Hexo</title>
+  <title>AICoding 的一些心得 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="博客说明"></span>
+            <span id="subtitle" data-typed-text="AICoding 的一些心得"></span>
           
         </div>
 
@@ -210,8 +211,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-10-11 14:12" pubdate>
-          2025年10月11日 下午
+        <time datetime="2025-10-16 20:57" pubdate>
+          2025年10月16日 晚上
         </time>
       </span>
     
@@ -222,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          31 字
+          1.3k 字
         
       </span>
     
@@ -233,7 +234,7 @@
         
         
         
-          1 分钟
+          11 分钟
         
       </span>
     
@@ -270,12 +271,50 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">博客说明</h1>
+            <h1 id="seo-header">AICoding 的一些心得</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="简单说明"><a href="#简单说明" class="headerlink" title="简单说明"></a>简单说明</h2><p>之前写的内容已经丢失，而且也有一年没更新，这次重新折腾一下。</p>
+                <h2 id="AI-Coding"><a href="#AI-Coding" class="headerlink" title="AI Coding"></a>AI Coding</h2><p>其实现在用大模型写代码是一个非常流行的事情了，这里分享下使用 codex 和 claude code 写代码的一些心得。</p>
+<h3 id="提前熟悉项目-or-做好系统设计"><a href="#提前熟悉项目-or-做好系统设计" class="headerlink" title="提前熟悉项目 or 做好系统设计"></a>提前熟悉项目 or 做好系统设计</h3><p>这里其实有一点废话，哪怕是古法编程最开始也是需要对项目或者系统有一个熟悉的过程，但是这里不一样的地方是我们可以把项目先梳理一遍，画出架构图，如果有架构图更好。然后把对项目的理解喂给 Claude Code 或者 GPT ，确认没有问题之后，让它生成一份文档出来，在后续开发上会使用这个文档。</p>
+<p>简单举个例子，这是一个镜像同步工具:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs bash">├── cmd<br>│   └── main.go<br>├── <span class="hljs-built_in">source</span><br>│   └── docker<br>├── target<br>│   └── harbor<br>└── <span class="hljs-built_in">sync</span><br></code></pre></td></tr></table></figure>
+
+<p>我会把我的理解和画出的架构图，整理成一份文档给 claude code ，之后让它解释。</p>
+<h3 id="编写-prompt"><a href="#编写-prompt" class="headerlink" title="编写 prompt"></a>编写 prompt</h3><p>用大模型写代码，其实很大程度上取决于你“怎么说”。一个好的 prompt 可以帮助我们提高效率，比如说使用 python 实现一个排序算法，可以这样写:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-section">### 角色设定</span><br>你是一名资深的 Python 后端工程师，拥有 10 年以上开发经验。<br>精通算法设计、代码可读性优化与性能调优。<br>擅长编写简洁、结构化、易维护的 Python3 代码，熟悉以下开发规范：<br><br>PEP8 代码规范<br><br>类型注解（type hints）<br><br>单元测试设计<br><br>在回答问题或编写代码时，请遵循以下要求：<br><br>给出完整的函数实现；<br><br>在关键逻辑处添加简要注释（说明思路或复杂语句）；<br><br>使用 Markdown 代码块输出结果；<br><br>若算法存在多种实现方式，可简要比较其优缺点；<br><br>输出保持整洁，不添加多余解释性文字<br><span class="hljs-section">### 任务要求</span><br>现在请你实现一个排序算法函数：<br><span class="hljs-code">`sort_numbers(nums: list[int]) -&gt; list[int]`</span><br><br>要求：<br><span class="hljs-bullet">1.</span> 从小到大排序；<br><span class="hljs-bullet">2.</span> 函数应包含必要注释；<br><span class="hljs-bullet">3.</span> 输出格式为 Markdown 代码块；<br><span class="hljs-bullet">4.</span> 附带一个简单的测试示例；<br><span class="hljs-bullet">5.</span> 若可能，请说明算法复杂度。<br><br>输入示例：<br><span class="hljs-code">```</span><br><span class="hljs-code">4, 2, 7, 3, 1, 8</span><br><span class="hljs-code">```</span><br><br>期望输出：<br><span class="hljs-code">```</span><br><span class="hljs-code">1, 2, 3, 4, 7, 8</span><br><span class="hljs-code">```</span><br><br><span class="hljs-section">### 例子:</span><br>你需要使用 Python3 实现一个排序算法，默认从小到大排序。<br>输入:<br>4,2,7,3,1,8<br>输出:<br>1,2,3,4,7,8<br>请用清晰的函数结构和注释完成。<br><span class="hljs-code">```</span><br><span class="hljs-code"></span><br></code></pre></td></tr></table></figure>
+
+<h3 id="写好需求文档"><a href="#写好需求文档" class="headerlink" title="写好需求文档"></a>写好需求文档</h3><p>就像前面写 Prompt 那样，需求文档其实是给 AI 的“背景知识”。 AI 不知道你在做什么项目、这个功能要放在哪个模块里，所以我们得提前把这些信息喂给它。通常我会在文档里写几句说明，比如功能背景、实现方式、注意事项，再加上一张简单的流程图。有时候哪怕是几句话，也能让 Claude Code 理解得更准确，少走弯路。</p>
+<p>使用之前 prompt 中排序的例子来简单写一个需求文档:</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs markdown"><span class="hljs-section">### 需求背景：</span><br>在数据处理模块中，需要一个通用的排序函数，用于对输入的整数列表进行升序排序，方便后续的统计与分析。<br><br><span class="hljs-section">### 实现方式：</span><br>使用 Python3 实现 sort<span class="hljs-emphasis">_numbers(nums: list[int]) -&gt; list[int]。</span><br><span class="hljs-emphasis">函数需要从小到大排序，并返回排序后的新列表。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 注意事项：</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">输入数据应为整数列表；</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">若输入为空或包含非法值，需给出合理处理（如报错或返回空列表）；</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">代码需符合 PEP8 规范，并包含必要注释；</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">输出以 Markdown 代码块格式返回；</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">附带一个简单的测试用例。</span><br><span class="hljs-emphasis"></span><br><span class="hljs-emphasis">### 输入示例</span><br><span class="hljs-emphasis">4, 2, 7, 3, 1, 8</span><br><span class="hljs-emphasis">### 期望输出</span><br><span class="hljs-emphasis">1, 2, 3, 4, 7, 8</span><br><span class="hljs-emphasis"></span><br></code></pre></td></tr></table></figure>
+
+<pre><code class=" mermaid">flowchart TD
+    A[开始] --&gt; B[接收输入列表 nums]
+    B --&gt; C&#123;是否为空&#125;
+    C -- 是 --&gt; D[返回空列表]
+    C -- 否 --&gt; E&#123;是否全为整数&#125;
+    E -- 否 --&gt; F[抛出 ValueError 异常]
+    E -- 是 --&gt; G[使用 sorted 函数升序排序]
+    G --&gt; H[返回排序结果]
+    H --&gt; I[结束]
+
+</code></pre>
+
+
+
+<h3 id="管理上下文"><a href="#管理上下文" class="headerlink" title="管理上下文"></a>管理上下文</h3><p>随着项目代码的增多，大模型有时会“变笨”——它可能：</p>
+<ol>
+<li>忘记项目结构；</li>
+<li>误解函数命名或模块职责；</li>
+<li>生成重复、冲突或风格不一致的代码。</li>
+</ol>
+<p>出现这些问题的根本原因，可能是上下文没有管理好。此时，之前编写的<strong>系统设计文档</strong>和<strong>需求说明</strong>就能派上用场了。你可以把它们当作“上下文约束”，让模型在清晰的语境下继续生成代码，从而保持风格一致，降低“抽风”的概率。此外，在每次完成一个功能、或准备在新窗口开始开发前，都可以让 Claude Code <strong>帮你总结当前对话内容</strong>，输出成一个 Markdown 文件（例如 <code>sync_module_summary.md</code>）。下次重新打开 Claude Code 时，把这份文件作为输入上下文，让它快速恢复对项目的理解。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents">https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.anthropic.com/engineering/claude-code-best-practices">https://www.anthropic.com/engineering/claude-code-best-practices</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.promptingguide.ai/zh">https://www.promptingguide.ai/zh</a></li>
+</ol>
 
                 
               </div>
@@ -285,6 +324,13 @@
               <div class="post-metas my-3">
   
   
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/AI/" class="print-no-link">#AI</a>
+      
+    </div>
+  
 </div>
 
 
@@ -293,8 +339,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>博客说明</div>
-      <div>http://example.com/2025/10/11/博客说明/</div>
+      <div>AICoding 的一些心得</div>
+      <div>http://example.com/2025/10/16/AICoding-的一些心得/</div>
     </div>
     <div class="license-meta">
       
@@ -306,7 +352,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年10月11日</div>
+          <div>2025年10月16日</div>
         </div>
       
       
@@ -338,18 +384,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/10/16/webhook-%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" title="webhook 一些使用方法">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">webhook 一些使用方法</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/10/11/hello-world/" title="Hello World">
-                        <span class="hidden-mobile">Hello World</span>
+                      <a href="/2025/10/16/webhook-%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" title="webhook 一些使用方法">
+                        <span class="hidden-mobile">webhook 一些使用方法</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -19,21 +19,22 @@
   <meta name="author" content="Wu Liang">
   <meta name="keywords" content="">
   
-    <meta name="description" content="简单说明之前写的内容已经丢失，而且也有一年没更新，这次重新折腾一下。">
+    <meta name="description" content="Webhook原理安全性实现">
 <meta property="og:type" content="article">
-<meta property="og:title" content="博客说明">
-<meta property="og:url" content="http://example.com/2025/10/11/%E5%8D%9A%E5%AE%A2%E8%AF%B4%E6%98%8E/index.html">
+<meta property="og:title" content="webhook 一些使用方法">
+<meta property="og:url" content="http://example.com/2025/10/16/webhook-%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="Hexo">
-<meta property="og:description" content="简单说明之前写的内容已经丢失，而且也有一年没更新，这次重新折腾一下。">
+<meta property="og:description" content="Webhook原理安全性实现">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-10-11T06:12:10.000Z">
-<meta property="article:modified_time" content="2025-10-11T06:23:11.231Z">
+<meta property="article:published_time" content="2025-10-16T12:02:33.000Z">
+<meta property="article:modified_time" content="2025-10-16T12:03:19.977Z">
 <meta property="article:author" content="Wu Liang">
+<meta property="article:tag" content="webhook">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>博客说明 - Hexo</title>
+  <title>webhook 一些使用方法 - Hexo</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -199,7 +200,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="博客说明"></span>
+            <span id="subtitle" data-typed-text="webhook 一些使用方法"></span>
           
         </div>
 
@@ -210,8 +211,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2025-10-11 14:12" pubdate>
-          2025年10月11日 下午
+        <time datetime="2025-10-16 20:02" pubdate>
+          2025年10月16日 晚上
         </time>
       </span>
     
@@ -222,7 +223,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          31 字
+          8 字
         
       </span>
     
@@ -270,13 +271,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">博客说明</h1>
+            <h1 id="seo-header">webhook 一些使用方法</h1>
             
             
               <div class="markdown-body">
                 
-                <h2 id="简单说明"><a href="#简单说明" class="headerlink" title="简单说明"></a>简单说明</h2><p>之前写的内容已经丢失，而且也有一年没更新，这次重新折腾一下。</p>
-
+                <h2 id="Webhook"><a href="#Webhook" class="headerlink" title="Webhook"></a>Webhook</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><h3 id="安全性"><a href="#安全性" class="headerlink" title="安全性"></a>安全性</h3><h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3>
                 
               </div>
             
@@ -284,6 +284,13 @@
             <div>
               <div class="post-metas my-3">
   
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/webhook/" class="print-no-link">#webhook</a>
+      
+    </div>
   
 </div>
 
@@ -293,8 +300,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>博客说明</div>
-      <div>http://example.com/2025/10/11/博客说明/</div>
+      <div>webhook 一些使用方法</div>
+      <div>http://example.com/2025/10/16/webhook-一些使用方法/</div>
     </div>
     <div class="license-meta">
       
@@ -306,7 +313,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2025年10月11日</div>
+          <div>2025年10月16日</div>
         </div>
       
       
@@ -338,9 +345,9 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2025/10/16/webhook-%E4%B8%80%E4%BA%9B%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/" title="webhook 一些使用方法">
+                      <a href="/2025/10/16/AICoding-%E7%9A%84%E4%B8%80%E4%BA%9B%E5%BF%83%E5%BE%97/" title="AICoding 的一些心得">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">webhook 一些使用方法</span>
+                        <span class="hidden-mobile">AICoding 的一些心得</span>
                         <span class="visible-mobile">上一篇</span>
                       </a>
                     
@@ -348,8 +355,8 @@
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2025/10/11/hello-world/" title="Hello World">
-                        <span class="hidden-mobile">Hello World</span>
+                      <a href="/2025/10/11/%E5%8D%9A%E5%AE%A2%E8%AF%B4%E6%98%8E/" title="博客说明">
+                        <span class="hidden-mobile">博客说明</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
