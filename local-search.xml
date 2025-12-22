@@ -4,6 +4,109 @@
   
   
   <entry>
+    <title>简单实现一个 claude plugin</title>
+    <link href="/2025/12/14/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA-claude-plugin/"/>
+    <url>/2025/12/14/%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA-claude-plugin/</url>
+    
+    <content type="html"><![CDATA[<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>之前每次使用 claude code 的时候，如果上下文太多了，比如说:</p><ol><li>多轮重构</li><li>长时间 debug</li><li>PRD &#x2F; 设计文档 + 代码同时存在</li></ol><p>这些会导致效果不好。再新开一个窗口又需要重新开始，但是新开一个窗口会有以下问题:</p><ol><li>需要重新解释项目背景</li><li>需要手动复制关键代码 &#x2F; 设计说明</li><li>很容易漏掉隐含上下文（约定、命名、历史决策）</li></ol><p>所以想着能不能实现一个命令来实现保存上下文，正好 claude code 推出了 plugins  正好可以做一个来试试看。</p><h2 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h2><p>从设计上看，Claude Code 的 plugin 并不是“代码插件”，而更接近一种 <strong>Skill &#x2F; Context Provider</strong>。这里可以看下官方例子:</p><p><img src="/../../image/image-20251222161455566.png" alt="image-20251222161455566"></p><p>plugin 的核心职责，并不是“执行复杂逻辑”，而是<strong>以不同形式，把能力或上下文接入到 Claude Code 的工作流中</strong>。有六种方式和 claude code 集成，这些可以组合使用:</p><ol><li>Slash command</li><li>Agent</li><li>Skills</li><li>Hook</li><li>Mcp Server</li><li>LSP Server</li></ol><p>我们实现方式是用 slash command 和 mcp-server 作为使用方法，mcp-server 具体实现我们这里不展开了，来看下 slash command 是怎么实现的。这是我们整体目录:</p><figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs nix">nidhogg-marketplace<span class="hljs-symbol">/</span><br>├── .claude-plugin<span class="hljs-symbol">/</span><br>│   └── marketplace.json<br>└── nidhogg<span class="hljs-symbol">/</span><br>    ├── .claude-plugin<span class="hljs-symbol">/</span><br>    │   └── plugin.json<br>    ├── commands<span class="hljs-symbol">/</span><br>    │   └── save.md<br>    └── .mcp.json<br><br></code></pre></td></tr></table></figure><ol><li>Marketplace 表示是插件集合的入口，下面可以有多个 plugin</li><li>nidhogg&#x2F;.claude-plugin&#x2F;plugin.json 是 plugin 主体，重点关心这一段。</li></ol><h3 id="slash-command-实现"><a href="#slash-command-实现" class="headerlink" title="slash command 实现"></a>slash command 实现</h3><p>1.首先创建一个 plugin marketplace 目录，用来存放插件定义：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> nidhogg-marketplace<br></code></pre></td></tr></table></figure><p>2.随后创建 Claude Code 约定的插件配置目录：</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> nidhogg-marketplace/.claude-plugin<br></code></pre></td></tr></table></figure><p>manifest 文件表示插件的身份信息：包括名称、描述和版本，写入 manifest 信息:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">/.claude-plugin/plugin.json<br></code></pre></td></tr></table></figure><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;owner&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;metadata&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;homepage&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-attr">&quot;plugins&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;name&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;nidhogg&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;version&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;0.1.0&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;source&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;./nidhogg&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;description&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;Persistent conversation memory and structured context system for Claude Code&quot;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure><p>这里需要注意的是：</p><ul><li>manifest 只描述“插件是什么”</li><li>并不涉及任何具体逻辑</li><li>Claude Code 会通过它发现并加载 plugin</li></ul><p>3.接着创建 slash command:</p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> nidhogg-marketplace/commands<br></code></pre></td></tr></table></figure><p>4.创建具体命令，命令名就是文件名，比如我的是 save，哪就应该是 save.md:</p><figure class="highlight md"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs md">---<br><span class="hljs-section">description: Save the current conversation into Nidhogg for long-term memory and future reuse</span><br><span class="hljs-section">---</span><br><br><span class="hljs-section"># Save Conversation</span><br><br>This conversation appears to be complete and ready to be preserved.<br><br>You should:<br><span class="hljs-bullet">1.</span> Identify the main topic and purpose of the conversation.<br><span class="hljs-bullet">2.</span> Write a concise summary suitable for future recall.<br><span class="hljs-bullet">3.</span> Extract any important decisions, conclusions, or design outcomes.<br><span class="hljs-bullet">4.</span> Assign relevant tags.<br><span class="hljs-bullet">5.</span> Call the Nidhogg MCP tool to persist:<br><span class="hljs-bullet">   -</span> the full conversation as Markdown<br><span class="hljs-bullet">   -</span> structured metadata as JSON<br><br>Ensure the saved output is clean, structured, and optimized for long-term retrieval.<br></code></pre></td></tr></table></figure><p>你需要在这个 Markdown 中明确告诉模型：</p><ul><li>当前命令的目的是什么</li><li>应该如何理解当前上下文</li><li>需要调用哪些工具</li><li>输出应该满足什么结构和质量要求</li></ul><p>完成这个文件之后，一个 Slash command 就已经“实现”了。</p><p>4.我们可以使用 claude –plugin-dir .&#x2F;nidhogg-marketplace 方式来做个测试，可以看到我们的命令：</p><p><img src="/../../image/image-20251222163604349.png" alt="image-20251222163604349"></p><h3 id="使用-mcp-server"><a href="#使用-mcp-server" class="headerlink" title="使用 mcp-server"></a>使用 mcp-server</h3><p>我们可以进阶一步，来实现 mcp-server，我们在之前 save.md 中也提到过 mcp tool，这里比较简单，我们配置好 .mcp.json 就可以，比如像下面这样:</p><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;mcpServers&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;nidhogg-mcp&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>      <span class="hljs-attr">&quot;type&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;stdio&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;command&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;uv&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;args&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">]</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;cwd&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-attr">&quot;env&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;PYTHONPATH&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">&#125;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br><br></code></pre></td></tr></table></figure><h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ol><li><a href="https://code.claude.com/docs/en/plugins">https://code.claude.com/docs/en/plugins</a></li><li><a href="https://github.com/anthropics/claude-code/tree/main/plugins/code-review">https://github.com/anthropics/claude-code/tree/main/plugins/code-review</a></li><li><a href="https://code.claude.com/docs/en/plugins-reference">https://code.claude.com/docs/en/plugins-reference</a></li><li><a href="https://github.com/Shuimo03/Nidhogg">https://github.com/Shuimo03/Nidhogg</a></li></ol>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>LLM</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>mcp-server 调试</title>
+    <link href="/2025/12/14/mcp-server-%E8%B0%83%E8%AF%95/"/>
+    <url>/2025/12/14/mcp-server-%E8%B0%83%E8%AF%95/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>failover的原理与简单实现</title>
+    <link href="/2025/12/01/failover%E7%9A%84%E5%8E%9F%E7%90%86%E4%B8%8E%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/"/>
+    <url>/2025/12/01/failover%E7%9A%84%E5%8E%9F%E7%90%86%E4%B8%8E%E7%AE%80%E5%8D%95%E5%AE%9E%E7%8E%B0/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>trade-bot informsource 组件实现与设计</title>
+    <link href="/2025/11/24/trade-bot-informsource-%E7%BB%84%E4%BB%B6%E5%AE%9E%E7%8E%B0%E4%B8%8E%E8%AE%BE%E8%AE%A1/"/>
+    <url>/2025/11/24/trade-bot-informsource-%E7%BB%84%E4%BB%B6%E5%AE%9E%E7%8E%B0%E4%B8%8E%E8%AE%BE%E8%AE%A1/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>简单做一个 grafana dashboard proxy</title>
+    <link href="/2025/11/17/%E7%AE%80%E5%8D%95%E5%81%9A%E4%B8%80%E4%B8%AA-grafana-dashboard-proxy/"/>
+    <url>/2025/11/17/%E7%AE%80%E5%8D%95%E5%81%9A%E4%B8%80%E4%B8%AA-grafana-dashboard-proxy/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>CronHPA + 弹性节点组踩坑记：资源不匹配导致 Pod 调度失败</title>
+    <link href="/2025/11/15/CronHPA-%E5%BC%B9%E6%80%A7%E8%8A%82%E7%82%B9%E7%BB%84%E8%B8%A9%E5%9D%91%E8%AE%B0%EF%BC%9A%E8%B5%84%E6%BA%90%E4%B8%8D%E5%8C%B9%E9%85%8D%E5%AF%BC%E8%87%B4-Pod-%E8%B0%83%E5%BA%A6%E5%A4%B1%E8%B4%A5/"/>
+    <url>/2025/11/15/CronHPA-%E5%BC%B9%E6%80%A7%E8%8A%82%E7%82%B9%E7%BB%84%E8%B8%A9%E5%9D%91%E8%AE%B0%EF%BC%9A%E8%B5%84%E6%BA%90%E4%B8%8D%E5%8C%B9%E9%85%8D%E5%AF%BC%E8%87%B4-Pod-%E8%B0%83%E5%BA%A6%E5%A4%B1%E8%B4%A5/</url>
+    
+    <content type="html"><![CDATA[]]></content>
+    
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>prometheus-histogram 使用方法</title>
+    <link href="/2025/11/13/prometheus-histogram-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/"/>
+    <url>/2025/11/13/prometheus-histogram-%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95/</url>
+    
+    <content type="html"><![CDATA[<h2 id="histogram"><a href="#histogram" class="headerlink" title="histogram"></a>histogram</h2><h2 id="延迟计算"><a href="#延迟计算" class="headerlink" title="延迟计算"></a>延迟计算</h2><h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2>]]></content>
+    
+    
+    
+    <tags>
+      
+      <tag>prometheus</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>K8S中的孤立资源</title>
     <link href="/2025/10/19/K8S%E4%B8%AD%E7%9A%84%E5%AD%A4%E5%84%BF%E8%B5%84%E6%BA%90/"/>
     <url>/2025/10/19/K8S%E4%B8%AD%E7%9A%84%E5%AD%A4%E5%84%BF%E8%B5%84%E6%BA%90/</url>
